@@ -1,65 +1,133 @@
 package com.phantomvk.ark.utility
 
+import android.graphics.Bitmap
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.io.OutputStream
 import java.net.URI
+import java.nio.charset.StandardCharsets
 
-class FileUtility {
 
+object FileUtility {
+
+  @JvmStatic
+  fun writeString(
+    string: String,
+    dstFile: File
+  ): Boolean {
+    return write(dstFile) {
+      write(string.toByteArray(StandardCharsets.UTF_8))
+      true
+    }
+  }
+
+  @JvmStatic
+  fun writeBitmap(
+    bitmap: Bitmap,
+    dstFile: File,
+    compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
+    quality: Int = 100
+  ): Boolean {
+    return write(dstFile) {
+      bitmap.compress(compressFormat, quality, this)
+    }
+  }
+
+  private fun write(
+    dstFile: File,
+    callback: (OutputStream.() -> Boolean)
+  ): Boolean {
+    if (!checkFile(dstFile)) {
+      return false
+    }
+
+    return try {
+      FileOutputStream(dstFile).use { fos ->
+        BufferedOutputStream(fos).use { bos ->
+          callback.invoke(bos)
+        }
+      }
+    } catch (e: Exception) {
+      false
+    }
+  }
+
+  private fun checkFile(dstFile: File): Boolean {
+    if (dstFile.exists()) {
+      if (!dstFile.delete()) {
+        return false
+      }
+    } else {
+      val parentFile = dstFile.parentFile
+      if (parentFile == null || (!parentFile.exists() && !parentFile.mkdirs())) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  @JvmStatic
   fun copyFile(
     srcFile: File,
     dstFile: URI,
     callback: ((writeBytes: Long) -> Unit)? = null
-  ) {
-    if (srcFile.exists()) {
-      throw FileNotFoundException("SourceFile does not exists.")
+  ): Boolean {
+    if (srcFile.exists() || !srcFile.canRead() || srcFile.isDirectory) {
+      return false
     }
 
-    FileInputStream(srcFile).use { fis ->
-      FileOutputStream(File(dstFile)).use { fos ->
-        val buffer = ByteArray(8192)
-        var read: Int
-
-        if (callback == null) {
-          while (fis.read(buffer).also { read = it } != -1) {
-            fos.write(buffer, 0, read)
-          }
-        } else {
-          var writeBytes = 0L
-          while (fis.read(buffer).also { read = it } != -1) {
-            fos.write(buffer, 0, read)
-            writeBytes += read
-            callback.invoke(writeBytes)
-          }
+    return try {
+      FileInputStream(srcFile).use { fis ->
+        FileOutputStream(File(dstFile)).use { fos ->
+          writeStream(fis, fos, callback)
         }
       }
+    } catch (e: Exception) {
+      false
     }
   }
 
-  fun writeFileStream(
-    file: File,
-    inputStream: InputStream,
+  @JvmStatic
+  fun writeStream(
+    `is`: InputStream,
+    dstFile: File,
     callback: ((writeBytes: Long) -> Unit)? = null
-  ) {
-    FileOutputStream(file).use { fos ->
-      val buffer = ByteArray(8192)
-      var read: Int
+  ): Boolean {
+    return try {
+      FileOutputStream(dstFile).use { fos ->
+        writeStream(`is`, fos, callback)
+      }
+    } catch (e: Exception) {
+      false
+    }
+  }
 
-      if (callback == null) {
-        while (inputStream.read(buffer).also { read = it } != -1) {
-          fos.write(buffer, 0, read)
-        }
-      } else {
-        var writeBytes = 0L
-        while (inputStream.read(buffer).also { read = it } != -1) {
-          fos.write(buffer, 0, read)
-          writeBytes += read
-          callback.invoke(writeBytes)
-        }
+  @JvmStatic
+  fun writeStream(
+    `is`: InputStream,
+    os: OutputStream,
+    callback: ((writeBytes: Long) -> Unit)? = null
+  ): Boolean {
+    val buffer = ByteArray(8192)
+    var read: Int
+
+    if (callback == null) {
+      while (`is`.read(buffer).also { read = it } != -1) {
+        os.write(buffer, 0, read)
+      }
+    } else {
+      var writeBytes = 0L
+      while (`is`.read(buffer).also { read = it } != -1) {
+        os.write(buffer, 0, read)
+        writeBytes += read
+        callback.invoke(writeBytes)
       }
     }
+
+    return true
   }
 }
