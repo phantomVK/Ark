@@ -1,5 +1,6 @@
 package com.phantomvk.ark.utility
 
+import com.phantomvk.ark.utility.android.postOnMainThread
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -33,7 +34,7 @@ object MessageDigestHelper {
   }
 
   @JvmStatic
-  private fun digestStream(
+  fun digestStream(
     md: MessageDigest,
     `is`: InputStream,
     callback: ((readBytes: Long) -> Unit)?
@@ -50,13 +51,13 @@ object MessageDigestHelper {
       while (`is`.read(buffer, 0, BUFFER_SIZE).also { read = it } != -1) {
         md.update(buffer, 0, read)
         readBytes += read
-        callback.invoke(readBytes)
+        postOnMainThread { callback.invoke(readBytes) }
       }
     }
   }
 
   @JvmStatic
-  private fun bytesToHexString(
+  fun bytesToHexString(
     byteArray: ByteArray
   ): String {
     val formatter = Formatter()

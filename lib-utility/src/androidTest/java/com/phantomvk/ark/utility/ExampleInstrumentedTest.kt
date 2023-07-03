@@ -17,8 +17,18 @@ import org.junit.Assert.*
 class ExampleInstrumentedTest {
   @Test
   fun useAppContext() {
-    // Context of the app under test.
     val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-    assertEquals("com.phantomvk.ark.utility.test", appContext.packageName)
+  }
+
+  @Test
+  fun testSystemUtility() {
+    val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+    assertNotEquals(0, SystemUtility.getDirectoryAvailableCapacity(appContext.filesDir))
+
+    // Get processor name.
+    val pkgName = "com.phantomvk.ark"
+    assertEquals(pkgName, SystemUtility.getProcessorName(appContext))
+    assertEquals(pkgName, SystemUtility.getProcessNameByPid(appContext))
+    assertEquals(pkgName, SystemUtility.getProcessorNameByCmd())
   }
 }

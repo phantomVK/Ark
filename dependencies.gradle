@@ -1,0 +1,21 @@
+ext {
+    kotlinLib = [
+        "kotlin-stdlib": "org.jetbrains.kotlin:kotlin-stdlib:1.8.10"
+    ]
+
+    androidLib = [
+        "core-ktx" : "androidx.core:core-ktx:1.10.1",
+        "appcompat": "androidx.appcompat:appcompat:1.6.1",
+        "material" : "com.google.android.material:material:1.9.0"
+    ]
+
+    androidTest = [
+        "junit"        : "junit:junit:4.13.2",
+        "extJunit"     : "androidx.test.ext:junit:1.1.5",
+        "espresso-core": "androidx.test.espresso:espresso-core:3.5.1"
+    ]
+
+    dependencies = [
+        "gson": "com.google.code.gson:gson:2.8.5"
+    ]
+}

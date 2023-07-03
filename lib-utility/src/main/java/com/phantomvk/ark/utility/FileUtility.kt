@@ -1,6 +1,6 @@
 package com.phantomvk.ark.utility
 
-import android.graphics.Bitmap
+import com.phantomvk.ark.utility.android.postOnMainThread
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -24,19 +24,7 @@ object FileUtility {
     }
   }
 
-  @JvmStatic
-  fun writeBitmap(
-    bitmap: Bitmap,
-    dstFile: File,
-    compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
-    quality: Int = 100
-  ): Boolean {
-    return write(dstFile) {
-      bitmap.compress(compressFormat, quality, this)
-    }
-  }
-
-  private fun write(
+  fun write(
     dstFile: File,
     callback: (OutputStream.() -> Boolean)
   ): Boolean {
@@ -124,7 +112,7 @@ object FileUtility {
       while (`is`.read(buffer).also { read = it } != -1) {
         os.write(buffer, 0, read)
         writeBytes += read
-        callback.invoke(writeBytes)
+        postOnMainThread { callback.invoke(writeBytes) }
       }
     }
 
