@@ -32,8 +32,9 @@ android {
 
 dependencies {
     api rootProject.ext.kotlinLib["kotlin-stdlib"]
-    api rootProject.ext.androidLib["core-ktx"]
     api rootProject.ext.androidLib["appcompat"]
+    api rootProject.ext.androidLib["core-ktx"]
+    api rootProject.ext.androidLib["lifecycle-runtime-ktx"]
     api rootProject.ext.androidLib["material"]
     androidTestImplementation rootProject.ext.androidTest["junit"]
     androidTestImplementation rootProject.ext.androidTest["extJunit"]

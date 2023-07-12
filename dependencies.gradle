@@ -1,12 +1,16 @@
 ext {
     kotlinLib = [
-        "kotlin-stdlib": "org.jetbrains.kotlin:kotlin-stdlib:1.8.10"
+        "kotlin-stdlib"             : "org.jetbrains.kotlin:kotlin-stdlib:1.8.10",
+        "kotlinx-coroutines-android": "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9"
     ]
 
     androidLib = [
-        "core-ktx" : "androidx.core:core-ktx:1.10.1",
-        "appcompat": "androidx.appcompat:appcompat:1.6.1",
-        "material" : "com.google.android.material:material:1.9.0"
+        "appcompat"              : "androidx.appcompat:appcompat:1.6.1",
+        "core-ktx"               : "androidx.core:core-ktx:1.10.1",
+        "lifecycle-livedata-ktx" : "androidx.lifecycle:lifecycle-livedata-ktx:2.4.0",
+        "lifecycle-runtime-ktx"  : "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0",
+        "lifecycle-viewmodel-ktx": "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0",
+        "material"               : "com.google.android.material:material:1.9.0"
     ]
 
     androidTest = [

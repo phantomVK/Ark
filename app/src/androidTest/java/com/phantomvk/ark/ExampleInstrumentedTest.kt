@@ -2,6 +2,9 @@ package com.phantomvk.ark
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.phantomvk.ark.utility.getProcessNameByPid
+import com.phantomvk.ark.utility.getProcessorName
+import com.phantomvk.ark.utility.getProcessorNameByCmd
 
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -1,4 +1,6 @@
-package com.phantomvk.ark.utility
+@file:JvmName("ObjectKt")
+
+package com.phantomvk.ark.utility.obj
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

@@ -23,12 +23,12 @@ class ExampleInstrumentedTest {
   @Test
   fun testSystemUtility() {
     val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-    assertNotEquals(0, SystemUtility.getDirectoryAvailableCapacity(appContext.filesDir))
+    assertNotEquals(0, getDirectoryAvailableCapacity(appContext.filesDir))
 
     // Get processor name.
-    val pkgName = "com.phantomvk.ark"
-    assertEquals(pkgName, SystemUtility.getProcessorName(appContext))
-    assertEquals(pkgName, SystemUtility.getProcessNameByPid(appContext))
-    assertEquals(pkgName, SystemUtility.getProcessorNameByCmd())
+    val pkgName = "com.phantomvk.ark.utility.test"
+    assertEquals(pkgName, getProcessorName(appContext))
+    assertEquals(pkgName, getProcessNameByPid(appContext))
+    assertEquals(pkgName, getProcessorNameByCmd())
   }
 }
