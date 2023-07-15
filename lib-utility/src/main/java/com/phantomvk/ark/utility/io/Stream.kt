@@ -13,21 +13,25 @@ import java.io.OutputStream
 fun writeStream(
   `is`: InputStream,
   os: OutputStream,
-  callback: ((writeBytes: Long) -> Unit)? = null
+  callback: ((progress: Double, writtenBytes: Int, totalBytes: Int) -> Unit)? = null
 ): Boolean {
   val buffer = ByteArray(8192)
-  var read: Int
+  var write: Int
 
   if (callback == null) {
-    while (`is`.read(buffer).also { read = it } != -1) {
-      os.write(buffer, 0, read)
+    while (`is`.read(buffer).also { write = it } != -1) {
+      os.write(buffer, 0, write)
     }
   } else {
-    var writeBytes = 0L
-    while (`is`.read(buffer).also { read = it } != -1) {
-      os.write(buffer, 0, read)
-      writeBytes += read
-      postOnMainThread { callback.invoke(writeBytes) }
+    var written = 0
+    val total = `is`.available()
+
+    while (`is`.read(buffer).also { write = it } != -1) {
+      os.write(buffer, 0, write)
+      written += write
+
+      val progress = written.toDouble() / total
+      postOnMainThread { callback.invoke(progress, written, total) }
     }
   }
 

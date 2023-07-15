@@ -59,7 +59,7 @@ fun writeFile(
 fun writeFile(
   `is`: InputStream,
   dstFile: File,
-  callback: ((writeBytes: Long) -> Unit)? = null
+  callback: ((progress: Double, writtenBytes: Int, totalBytes: Int) -> Unit)? = null
 ): Boolean {
   if (!checkDstFile(dstFile)) {
     return false
@@ -73,7 +73,7 @@ fun writeFile(
 fun copyFile(
   srcFile: File,
   dstFile: File,
-  callback: ((writeBytes: Long) -> Unit)? = null
+  callback: ((progress: Double, writtenBytes: Int, totalBytes: Int) -> Unit)? = null
 ): Boolean {
   if (!checkSrcFile(srcFile) || !checkDstFile(dstFile)) {
     return false
@@ -93,12 +93,7 @@ private fun checkDstFile(file: File): Boolean {
     if (!file.delete()) {
       return false
     }
-  } else {
-    val parentFile = file.parentFile
-    if (parentFile == null || (!parentFile.exists() && !parentFile.mkdirs())) {
-      return false
-    }
   }
 
-  return true
+  return file.mkdirs()
 }
