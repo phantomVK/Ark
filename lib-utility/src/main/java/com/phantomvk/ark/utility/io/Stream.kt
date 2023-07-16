@@ -10,23 +10,25 @@ import java.io.InputStreamReader
 import java.io.OutputStream
 
 
+private const val BUFFER_SIZE = 8 * 1024
+
 fun writeStream(
   `is`: InputStream,
   os: OutputStream,
   callback: ((progress: Double, writtenBytes: Int, totalBytes: Int) -> Unit)? = null
 ): Boolean {
-  val buffer = ByteArray(8192)
+  val buffer = ByteArray(BUFFER_SIZE)
   var write: Int
 
   if (callback == null) {
-    while (`is`.read(buffer).also { write = it } != -1) {
+    while (`is`.read(buffer, 0, BUFFER_SIZE).also { write = it } != -1) {
       os.write(buffer, 0, write)
     }
   } else {
     var written = 0
     val total = `is`.available()
 
-    while (`is`.read(buffer).also { write = it } != -1) {
+    while (`is`.read(buffer, 0, BUFFER_SIZE).also { write = it } != -1) {
       os.write(buffer, 0, write)
       written += write
 

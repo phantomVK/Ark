@@ -10,7 +10,7 @@ import java.security.MessageDigest
 import java.util.Formatter
 
 
-private const val BUFFER_SIZE = 8192
+private const val BUFFER_SIZE = 8 * 1024
 
 /**
  * 根据文件内容计算哈希
@@ -21,7 +21,7 @@ private const val BUFFER_SIZE = 8192
 fun getFileHash(
   pathname: String,
   algorithm: String,
-  callback: ((readBytes: Long) -> Unit)?
+  callback: ((progress: Double, readBytes: Int, totalBytes: Int) -> Unit)?
 ): String {
   val file = File(pathname)
   val md = MessageDigest.getInstance(algorithm)
@@ -36,7 +36,7 @@ fun getFileHash(
 fun digestStream(
   md: MessageDigest,
   `is`: InputStream,
-  callback: ((readBytes: Long) -> Unit)?
+  callback: ((progress: Double, readBytes: Int, totalBytes: Int) -> Unit)?
 ) {
   val buffer = ByteArray(BUFFER_SIZE)
   var read: Int
@@ -46,11 +46,15 @@ fun digestStream(
       md.update(buffer, 0, read)
     }
   } else {
-    var readBytes = 0L
+    var readBytes = 0
+    val total = `is`.available()
+
     while (`is`.read(buffer, 0, BUFFER_SIZE).also { read = it } != -1) {
       md.update(buffer, 0, read)
       readBytes += read
-      postOnMainThread { callback.invoke(readBytes) }
+
+      val progress = readBytes.toDouble() / total
+      postOnMainThread { callback.invoke(progress, readBytes, total) }
     }
   }
 }

@@ -2,7 +2,6 @@
 
 package com.phantomvk.ark.utility.io
 
-import android.graphics.Bitmap
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -11,21 +10,6 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
 
-
-fun writeBitmap(
-  bitmap: Bitmap,
-  dstFile: File,
-  compressFormat: Bitmap.CompressFormat,
-  quality: Int
-): Boolean {
-  if (!checkDstFile(dstFile)) {
-    return false
-  }
-
-  return writeFile(dstFile) {
-    bitmap.compress(compressFormat, quality, this)
-  }
-}
 
 fun writeString(
   string: String,
@@ -84,11 +68,11 @@ fun copyFile(
   }
 }
 
-private fun checkSrcFile(file: File): Boolean {
+fun checkSrcFile(file: File): Boolean {
   return file.exists() && file.canRead() && file.isFile
 }
 
-private fun checkDstFile(file: File): Boolean {
+fun checkDstFile(file: File): Boolean {
   if (file.exists()) {
     if (!file.delete()) {
       return false
