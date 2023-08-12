@@ -5,6 +5,7 @@ package com.phantomvk.ark.utility.media
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Point
+import androidx.annotation.IntRange
 import androidx.exifinterface.media.ExifInterface
 import com.phantomvk.ark.utility.io.checkDstFile
 import com.phantomvk.ark.utility.io.writeFile
@@ -44,7 +45,7 @@ fun writeBitmap(
   bitmap: Bitmap,
   dstFile: File,
   compressFormat: Bitmap.CompressFormat,
-  quality: Int
+  @IntRange(0, 100) quality: Int
 ): Boolean {
   if (!checkDstFile(dstFile)) {
     return false
