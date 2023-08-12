@@ -15,6 +15,35 @@ private const val BUFFER_SIZE = 8 * 1024
 /**
  * 根据文件内容计算哈希
  *
+ * @param pathNameList  文件路径列表
+ * @param algorithm     java.security.MessageDigest
+ */
+fun getFilesHash(
+  pathNameList: List<String>,
+  algorithm: String,
+  callback: ((progress: Double, readBytes: Int, totalBytes: Int) -> Unit)?
+): List<String> {
+  val buffer = ByteArray(BUFFER_SIZE)
+  val md = MessageDigest.getInstance(algorithm)
+  val result = ArrayList<String>(pathNameList.size)
+
+  for (pathName in pathNameList) {
+    val file = File(pathName)
+
+    FileInputStream(file).use { fis ->
+      digestStream(md, fis, buffer, callback)
+    }
+
+    result.add(bytesToHexString(md.digest()))
+    md.reset()
+  }
+
+  return result
+}
+
+/**
+ * 根据文件内容计算哈希
+ *
  * @param pathname  文件路径
  * @param algorithm java.security.MessageDigest
  */
@@ -27,7 +56,7 @@ fun getFileHash(
   val md = MessageDigest.getInstance(algorithm)
 
   FileInputStream(file).use { fis ->
-    digestStream(md, fis, callback)
+    digestStream(md, fis, ByteArray(BUFFER_SIZE), callback)
   }
 
   return bytesToHexString(md.digest())
@@ -36,20 +65,21 @@ fun getFileHash(
 fun digestStream(
   md: MessageDigest,
   `is`: InputStream,
+  buffer: ByteArray,
   callback: ((progress: Double, readBytes: Int, totalBytes: Int) -> Unit)?
 ) {
-  val buffer = ByteArray(BUFFER_SIZE)
   var read: Int
+  val bufferSize = buffer.size
 
   if (callback == null) {
-    while (`is`.read(buffer, 0, BUFFER_SIZE).also { read = it } != -1) {
+    while (`is`.read(buffer, 0, bufferSize).also { read = it } != -1) {
       md.update(buffer, 0, read)
     }
   } else {
     var readBytes = 0
     val total = `is`.available()
 
-    while (`is`.read(buffer, 0, BUFFER_SIZE).also { read = it } != -1) {
+    while (`is`.read(buffer, 0, bufferSize).also { read = it } != -1) {
       md.update(buffer, 0, read)
       readBytes += read
 
